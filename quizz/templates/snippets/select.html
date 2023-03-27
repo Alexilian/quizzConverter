@@ -1,0 +1,15 @@
+{% comment %}
+Paramètres:
+    selectName: correspond au name donné a l'input, et va etre donné pour l'ID
+    fieldLabel: correspond au nom affiché a l'input
+    listOption: correspond aux objects en proposition
+    selectOnChange: correspond a l'action qui s'effectue lorsque le dropdown est modifié (nullable)
+{% endcomment %}
+<div class="input_div">
+    <label for="id_select_{{selectName}}">{{fieldLabel}}</label>
+    <select name="{{selectName}}" id="id_select_{{selectName}}" onchange="{{selectOnChange}}" required>
+        {% for element in listOption %}
+            <option value="{{element}}">{{element}}</option>
+        {% endfor %}
+    </select>
+</div>

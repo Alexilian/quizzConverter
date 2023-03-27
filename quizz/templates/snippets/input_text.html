@@ -1,0 +1,10 @@
+{% comment %}
+Paramètres:
+    fieldName: correspond au name donné a l'input, et va etre donné pour l'ID
+    fieldLabel: correspond au nom affiché a l'input
+    fieldValue (non obligatoire): correspond a la value qu'on veut lui donner (si on veut lui en donner)
+{% endcomment %}
+<div class="input_div">
+    <label for="id_{{ fieldName }}"> {{fieldLabel}}</label>
+    <input type="text" value="{{fieldValue}}" id="id_{{ fieldName }}" name="{{ fieldName }}">
+</div>

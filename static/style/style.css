@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    background-color: #15172b;
+    color: white;
+    font-family: sans-serif;
+}
+
+nav {
+   width: 100%;
+   top: 0;
+   left: 0;
+   background-color: #303245;
+   font-size: 120%;
+   margin-bottom: 3%;
+   display: flex;
+   justify-content: space-evenly;
+}
+
+nav a {
+   display: inline-block;
+   width: 100%;
+   color: White;
+   text-align: center;
+   line-height: 300%;
+   text-decoration: none;
+}
+nav a:hover {
+    background-color: #505372;
+}
+
+form {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+input {
+  background-color: #303245;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: #eee;
+  font-size: 18px;
+  height: 4%;
+  outline: 0;
+  padding: 4px 20px 0;
+  width: 100%;
+}
+
+.input_div {
+    margin-bottom: 40px;
+}
+
+select {
+  background-color: #303245;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: #eee;
+  font-size: 18px;
+  height: 4%;
+  outline: 0;
+  padding: 4px 20px 0;
+  width: 50%;
+}
+
+button {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #08d;
+    border-radius: 12px;
+    border: 0;
+    box-sizing: border-box;
+    color: #eee;
+    cursor: pointer;
+    font-size: 18px;
+    height: 50px;
+    margin-top: 38px;
+    text-align: center;
+    width: 10%;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #15172b;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius:5px;
+  background: #303245;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505372;
+}

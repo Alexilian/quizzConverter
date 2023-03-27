@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'style/create_quizz.css' %}">
+
+    <form id="form1" method="post">
+        {% csrf_token %}
+        <h1>Créer un quizz</h1>
+        {% include "snippets/select.html" with selectName="type_quizz" fieldLabel="Type de quizz :" listOption=quizz_type_list %}
+        {% include "snippets/input_text.html" with fieldName="title_quizz" fieldLabel="Titre du quizz :" %}
+        {% include "snippets/input_text.html" with fieldName="description_quizz" fieldLabel="Description du quizz :" %}
+        <div id="id_question_1" class="one_question">
+            <h2>
+                Question n°1
+            </h2>
+            <div id="id_fields">
+                {% include "snippets/select.html" with selectName="type_question_1" fieldLabel="Type de question :" listOption=question_type_list selectOnChange="addAnswer('id_select_type_question_1')" %}
+                {% include "snippets/input_text.html" with fieldName="title_1" fieldLabel="Titre de la question :" %}
+                {% include "snippets/input_text.html" with fieldName="description_1" fieldLabel="Description de la question :" %}
+            </div>
+        </div>
+
+        <button id="but_add" type="button" >Ajouter Question</button>
+
+        <button type="submit" form="form1" value="Submit">Submit</button>
+    </form>
+
+{% block extrascripts %}<script type="text/JavaScript" src="{% static 'js/create_quizz.js' %}"></script>{% endblock %}
+{% endblock %}
