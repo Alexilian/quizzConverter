@@ -14,7 +14,7 @@
                 Question n°1
             </h2>
             <div id="id_fields">
-                {% include "snippets/select.html" with selectName="type_question_1" fieldLabel="Type de question :" listOption=question_type_list selectOnChange="addAnswer('id_select_type_question_1')" %}
+                {% include "snippets/select.html" with selectName="type_question_1" fieldLabel="Type de question :" listOption=question_type_list selectOnChange="addAnswer('id_select_type_question_1', 'id_question_1')" %}
                 {% include "snippets/input_text.html" with fieldName="title_1" fieldLabel="Titre de la question :" %}
                 {% include "snippets/input_text.html" with fieldName="description_1" fieldLabel="Description de la question :" %}
             </div>

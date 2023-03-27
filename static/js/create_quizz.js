@@ -13,7 +13,7 @@ $('#but_add').click(function(){
 
     let select = $(`#id_question_${num} > #id_fields > .input_div > select`);
     select.attr("id", "id_select_type_question_"+num);
-    select.attr("onchange", "addAnswer('id_select_type_question_"+num+"')");
+    select.attr("onchange", "addAnswer('id_select_type_question_"+num+"', 'id_question_"+num+"')");
 
     let input = $(`#id_question_${num} > #id_fields > .input_div > #id_title_1`).attr({"id": "id_title_"+num, "name": "title_"+num});
     let input2 = $(`#id_question_${num} > #id_fields > .input_div >  #id_description_1`).attr({"id": "id_description_"+num, "name": "description_"+num});
@@ -24,11 +24,12 @@ function delQuestion(param){
     $("#id_question_"+param).remove();
 }
 
-function addAnswer(id){
-    if($("#"+id).val() == "Choix multiple"){
-        console.log("Ajout reponses multiples");
+function addAnswer(id_s, id_q){
+    if($("#"+id_s).val() == "Choix multiple"){
+        $("#"+id_q).append('<link href="snippets/add_answer.html" rel="import" />');
+
     }else{
-        if($("#"+id).val() == "Choix unique"){
+        if($("#"+id_s).val() == "Choix unique"){
             console.log("Ajout reponses unique");
         }
     }
