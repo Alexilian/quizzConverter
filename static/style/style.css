@@ -46,6 +46,10 @@ input {
   width: 100%;
 }
 
+input[type="number"] {
+    width: 8%;
+}
+
 .input_div {
     margin-bottom: 40px;
 }

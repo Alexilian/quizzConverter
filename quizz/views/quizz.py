@@ -17,7 +17,7 @@ class QuizzCreateView(FormView):
     def get_context_data(self, **kwargs):
         context = super(QuizzCreateView, self).get_context_data(**kwargs)
         context["quizz_type_list"] = QuizzType
-        context["question_type_list"] = ("Vrai/Faux", "Choix multiple", "Choix unique")
+        context["question_type_list"] = ("", "Vrai/Faux", "Choix multiple", "Choix unique")
 
         return context
 
