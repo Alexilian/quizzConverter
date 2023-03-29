@@ -21,3 +21,12 @@ class QuizzCreateView(FormView):
 
         return context
 
+    def form_valid(self, form):
+
+        try:
+
+            return super(QuizzCreateView, self).form_valid(form)
+
+        except Exception as e:
+
+            return super(QuizzCreateView, self).form_invalid(form)
