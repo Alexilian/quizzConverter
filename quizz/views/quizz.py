@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 
 from quizz.forms.quizz import QuizzForm
-from quizz.models import QuizzType, Question, Quizz, Answer
+from quizz.models import Question, Quizz, Answer
 
 import re
 
@@ -34,13 +34,13 @@ class QuizzCreateView(FormView):
         try:
 
             new_quizz = Quizz(
-                quizz_type=self.request.POST["quizz_type"],
                 title=self.request.POST["title"],
                 description=self.request.POST["description"]
             )
             new_quizz.save()
             created_objects.append(new_quizz)
-            for key in list(self.request.POST.keys())[4:]:
+
+            for key in list(self.request.POST.keys())[3:]:
 
                 id_q = re.findall(r'\d+', key)
                 if len(id_q) == 1:
@@ -86,11 +86,8 @@ class QuizzCreateView(FormView):
                                 list_question[id_q[0]]["answers"][id_q[1]]["point"] = 1
                             else:
                                 list_question[id_q[0]]["answers"][id_q[1]]["point"] = 0
-
             for question_number in list(list_question):
                 the_question = list_question[question_number]
-
-                print("Salut a tous", the_question)
 
                 the_type = the_question["type_question"]
                 the_title = the_question["title"]
@@ -148,7 +145,6 @@ class QuizzCreateView(FormView):
                         )
                         new_answer.save()
                         created_objects.append(new_answer)
-
             return super(QuizzCreateView, self).form_valid(form)
 
         except Exception as e:
