@@ -6,8 +6,8 @@ Paramètres:
     selectOnChange: correspond a l'action qui s'effectue lorsque le dropdown est modifié (nullable)
 {% endcomment %}
 <div class="input_div">
-    <label for="id_select_{{selectName}}">{{fieldLabel}}</label>
-    <select name="{{selectName}}" id="id_select_{{selectName}}" onchange="{{selectOnChange}}" {{isRequired}}>
+    <label for="id_{{selectName}}">{{fieldLabel}}</label>
+    <select name="{{selectName}}" id="id_{{selectName}}" onchange="{{selectOnChange}}" {{isRequired}}>
         {% for element in listOption %}
             <option value="{{element}}">{{element}}</option>
         {% endfor %}
