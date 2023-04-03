@@ -6,7 +6,6 @@
     <form id="form1" enctype="multipart/form-data" method="POST">
         {% csrf_token %}
         <h1>Créer un quizz</h1>
-        {% include "snippets/select.html" with selectName="quizz_type" fieldLabel="Type de quizz :" listOption=quizz_type_list isRequired="required" %}
         {% include "snippets/input_text.html" with fieldName="title" fieldLabel="Titre du quizz :" isRequired="required" %}
         {% include "snippets/input_text.html" with fieldName="description" fieldLabel="Description du quizz :" isRequired="required" %}
         <div id="id_question_1" class="one_question">
@@ -14,7 +13,7 @@
                 Question n°1
             </h2>
             <div id="id_fields">
-                {% include "snippets/select.html" with selectName="type_question_1" fieldLabel="Type de question :" listOption=question_type_list selectOnChange="addAnswer('id_select_type_question_1')" isRequired="required" %}
+                {% include "snippets/select.html" with selectName="type_question_1" fieldLabel="Type de question :" listOption=question_type_list selectOnChange="addAnswer('id_type_question_1')" isRequired="required" %}
                 {% include "snippets/input_text.html" with fieldName="title_1" fieldLabel="Titre de la question :" isRequired="required" %}
                 {% include "snippets/input_text.html" with fieldName="comment_1" fieldLabel="Commentaires de la question :" isRequired="required" %}
                 {% include "snippets/input_number.html" with fieldName="point_1" fieldLabel="Points totaux de la question :" fieldMin=0 fieldStep=0.25 isRequired="required" %}

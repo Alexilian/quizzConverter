@@ -5,7 +5,7 @@ from quizz.models import Quizz
 
 class QuizzAdmin(admin.ModelAdmin):
 
-    list_display = ("owner", "title", "description", "quizz_type")
+    list_display = ("owner", "title", "description")
 
 
 admin.site.register(Quizz, QuizzAdmin)

@@ -11,19 +11,18 @@ $('#but_add').click(function(){
 
     let svg = $(`#id_question_${num} > h2 > svg`).attr("id", "id_cross_"+num);
 
-    let select = $(`#id_question_${num} > #id_fields > .input_div > select`);
-    select.attr("id", "id_select_type_question_"+num);
-    select.attr("onchange", "addAnswer('id_select_type_question_"+num+"')");
+    let select = $(`#id_question_${num} > #id_fields > .input_div > select`).attr({"id": "id_type_question_"+num, "name": "type_question_"+num, "onchange": "addAnswer('id_type_question_"+num+"')"});
 
     let reponses = $("#id_question_"+num+" > .reponses");
     reponses.empty();
     reponses.attr({"id": "id_reponses_"+num});
 
-    let input = $(`#id_question_${num} > #id_fields > .input_div > #id_title_1`).attr({"id": "id_title_"+num, "name": "title_"+num});
+    let input = $(`#id_question_${num} > #id_fields > .input_div > #id_title_${num-1}`).attr({"id": "id_title_"+num, "name": "title_"+num});
     input.val('');
-    let input2 = $(`#id_question_${num} > #id_fields > .input_div >  #id_description_1`).attr({"id": "id_description_"+num, "name": "description_"+num});
+    console.log(input)
+    let input2 = $(`#id_question_${num} > #id_fields > .input_div >  #id_comment_${num-1}`).attr({"id": "id_comment_"+num, "name": "comment_"+num});
     input2.val('');
-    let input3 = $(`#id_question_${num} > #id_fields > .input_div >  #id_point_1`).attr({"id": "id_point_"+num, "name": "point_"+num});
+    let input3 = $(`#id_question_${num} > #id_fields > .input_div >  #id_point_${num-1}`).attr({"id": "id_point_"+num, "name": "point_"+num});
     input3.val('');
 });
 
@@ -41,7 +40,8 @@ function addAnswer(id_s){
     $("#id_reponses_"+id).empty();
     switch ($("#"+id_s).val()){
         case "Choix multiple":
-            $("#id_reponses_"+id).append('Points / Réponse :<div class="input_div" name="answer_1"><label for="id_q_'+id+'_answer_1">'+getPourcentages(id, id_s)+'</label><input type="text" id="id_q_'+id+'_answer_1" name="q_'+id+'_answer_1" style="width: 90%;" required></div><button id="id_but_add_answer_'+id+'" type="button" onclick="addOneAnswer('+id+')">Ajouter une réponse</button>');
+            console.log(id, id_s);
+            $("#id_reponses_"+id).append('Points / Réponse :<div class="input_div" name="answer_1"><label for="id_q_'+id+'_answer_1">'+getPourcentages(id, 1)+'</label><input type="text" id="id_q_'+id+'_answer_1" name="q_'+id+'_answer_1" style="width: 90%;" required></div><button id="id_but_add_answer_'+id+'" type="button" onclick="addOneAnswer('+id+')">Ajouter une réponse</button>');
             break;
         case "Choix unique":
             $("#id_reponses_"+id).append('<div class="input_div" name="answer_1"><label for="id_q_'+id+'_answer_1">Bonne réponse :</label><input type="text" id="id_q_'+id+'_answer_1" name="q_'+id+'_answer_1" required></div><button id="id_but_add_answer_'+id+'" type="button" onclick="addOneUniqueAnswer('+id+')">Ajouter une réponse fausse</button>');

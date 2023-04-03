@@ -14,8 +14,6 @@ class Quizz(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    quizz_type = models.CharField(max_length=64, choices=QuizzType.choices, default=QuizzType.MOODLE)
-
     def __str__(self):
         return self.title
 
