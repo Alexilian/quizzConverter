@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'style/create_quizz.css' %}">
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <label for="id_importMoodle">Importez votre fichier XML Moodle</label>
+        <input type="file" id="id_importMoodle" name="importXML">
+
+        <input type="submit" value="Submit">
+    </form>
+
+{% block extrascripts %}<script type="text/JavaScript" src="{% static 'js/create_quizz.js' %}"></script>{% endblock %}
+{% endblock %}

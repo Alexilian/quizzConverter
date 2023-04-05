@@ -1,6 +1,9 @@
+from xml.etree import ElementTree as ET
+
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 
+from quizz.forms.importMoodle import ImportMoodle
 from quizz.forms.quizz import QuizzForm
 from quizz.models import QuizzType, Question, Quizz, Answer
 
@@ -10,6 +13,43 @@ import re
 class QuizzTemplateView(TemplateView):
 
     template_name = "quizz/home.html"
+
+def read_XML(file_name):
+    file = ET.parse(file_name).getroot()
+    for question in file.findall('question'):
+        # print(question.attributes['type'].value)
+        questionText = question.find('questiontext')
+        points = question.find('defaultgrade')
+        text = None
+        if questionText is not None:
+            text = questionText.find("text")
+            if text is not None:
+                print(text.text)
+        # newQuestion= Question(
+        #     title=,
+        #     position =,
+        #     comment =,
+        #     type_of_question =,
+        #     quizz =,
+        #     points =,
+        # )
+
+class QuizzImportMoodle(FormView):
+    template_name = "quizz/importFromMoodle.html"
+    form_class = ImportMoodle
+
+    def get_success_url(self):
+        return reverse("home")
+    def form_valid(self, form):
+        file = form.cleaned_data["importXML"]
+        read_XML(file)
+        return super(QuizzImportMoodle, self).form_valid(form)
+    def form_invalid(self, form):
+        print(form.errors)
+        return super(QuizzImportMoodle, self).form_invalid(form)
+
+
+
 
 
 class QuizzCreateView(FormView):
