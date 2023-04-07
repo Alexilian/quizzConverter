@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 
 from quizz.forms.quizz import QuizzForm
-from quizz.models import Question, Quizz, Answer
+from quizz.models import Question, Quizz, Answer, QuestionType
 
 import re
 
@@ -22,7 +22,7 @@ class QuizzCreateView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizzCreateView, self).get_context_data(**kwargs)
-        context["question_type_list"] = ("", "Vrai/Faux", "Choix multiple", "Choix unique")
+        context["question_type_list"] = QuestionType
 
         return context
 
@@ -149,5 +149,4 @@ class QuizzCreateView(FormView):
 
         except Exception as e:
             print(e)
-
             return super(QuizzCreateView, self).form_invalid(form)

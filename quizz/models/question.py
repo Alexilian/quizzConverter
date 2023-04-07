@@ -3,6 +3,14 @@ from django.db import models
 from quizz.models.quizz import Quizz
 
 
+class QuestionType(models.TextChoices):
+    Libre = "Réponse libre"
+    ImageJustif = "Réponse libre justification image"
+    Boolean = "Vrai/Faux"
+    Multiple = "Choix multiple"
+    Unique = "Choix unique"
+
+
 class Question(models.Model):
     title = models.CharField(max_length=255)
     position = models.IntegerField(blank=True, null=True)
