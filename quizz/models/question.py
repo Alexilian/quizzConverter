@@ -17,7 +17,7 @@ class Question(models.Model):
     comment = models.TextField(blank=True, null=True)
     type_of_question = models.CharField(max_length=255, blank=True, null=True)
     quizz = models.ForeignKey(Quizz, on_delete=models.CASCADE, related_name="questions", null=True, blank=True)
-    points = models.IntegerField(blank=True, null=True)
+    points = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return self.title

@@ -8,3 +8,7 @@ class QuizzForm(ModelForm):
     class Meta:
         model = Quizz
         fields = ["title", "description"]
+
+    def custom_save(self):
+        my_obj = self.save()
+        return my_obj
