@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView
 
 from quizz.forms.quizz import QuizzForm
 from quizz.models import QuizzType, Question, Quizz, Answer
@@ -34,7 +34,6 @@ class QuizzCreateView(FormView):
         try:
 
             new_quizz = Quizz(
-                quizz_type=self.request.POST["quizz_type"],
                 title=self.request.POST["title"],
                 description=self.request.POST["description"]
             )
@@ -155,3 +154,13 @@ class QuizzCreateView(FormView):
             print(e)
 
             return super(QuizzCreateView, self).form_invalid(form)
+        
+
+class QuizzListView(ListView):
+
+    model = Quizz
+    template_name = 'quizz/list_quizz.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        return context
