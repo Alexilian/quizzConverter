@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, CreateView, FormView, ListView
 
@@ -401,3 +401,9 @@ def export_quizz(request, pk):
     response = HttpResponse(xml_string, content_type='text/xml')
     response['Content-Disposition'] = 'attachment; filename="quiz.xml"'
     return response
+
+
+def delete_quizz(request, pk):
+    Quizz.objects.get(pk=pk).delete()
+
+    return redirect(reverse('list_quizz'), kwargs={'object_list': Quizz.objects.all()})
