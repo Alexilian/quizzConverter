@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tags_extras %}
 {% block content %}
 <table>
     <thead>
@@ -15,7 +16,7 @@
         <td>{{ quizz.id }}</td>
         <td>{{ quizz.title }}</td>
         <td>{{ quizz.description }}</td>
-        <td><button id="id_export">Export</button></td>
+        <td><button onclick="location.href='{% url 'download' quizz.id %}'" id="id_export">Export</button></td>
       </tr>
       {% endfor %}
     </tbody>
