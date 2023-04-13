@@ -23,10 +23,12 @@ class Question(models.Model):
         return self.title
 
     def get_xml_question_type(self):
-        if self.type_of_question == 'multiple_choice':
+        if self.type_of_question == 'Choix multiple':
             return 'multichoice'
-        if self.type_of_question == 'true_false':
+        elif self.type_of_question == 'Vrai/Faux':
             return 'truefalse'
-        if self.type_of_question == 'single_choice':
+        elif self.type_of_question == 'Choix unique':
             return 'multichoice'
+        elif self.type_of_question == 'Réponse libre':
+            return 'shortanswer'
         return self.type_of_question
