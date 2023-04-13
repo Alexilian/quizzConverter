@@ -28,7 +28,7 @@ nav a:hover {
     background-color: #505372;
 }
 
-form {
+main {
     margin-left: 5%;
     margin-right: 5%;
 }
@@ -41,9 +41,24 @@ input {
   color: #eee;
   font-size: 18px;
   height: 4%;
-  outline: 0;
   padding: 4px 20px 0;
   width: 100%;
+}
+
+input[type="checkbox"] {
+  height: 3%;
+  width: 3%;
+  margin-left: 50px;
+  position: relative;
+  top: 8px;
+}
+
+input[type="radio"] {
+  height: 3%;
+  width: 3%;
+  margin-left: 50px;
+  position: relative;
+  top: 8px;
 }
 
 input[type="number"] {

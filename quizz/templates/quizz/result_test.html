@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'style/create_quizz.css' %}">
+
+    <h1>Vous avez {{point_totaux}}/{{note_max}} {% if point_attente != 0 %} dont {{point_attente}} points en attente.{% endif %}</h1>
+
+
+{% endblock %}

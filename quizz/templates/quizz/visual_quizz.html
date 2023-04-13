@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'style/create_quizz.css' %}">
+
+    <form id="form1" enctype="multipart/form-data" method="POST">
+        <h1>{{ the_quizz.title }} (note sur {{ note_max }})</h1>
+        {% csrf_token %}
+        {% for the_question in all_questions %}
+            {% with forloop.counter as id_parent %}
+
+                <div id="id_question_{{forloop.counter}}" class="one_question">
+                    <h2>
+                        Question n°{{forloop.counter}}
+                    </h2>
+                    <h3>{{the_question.title}} :</h3>
+                    {% if the_question.type_of_question == "Réponse libre" %}
+                        <div class="input_div">
+                            <input type="text" id="id_q_{{ the_question.id }}" name="q_{{ the_question.id }}">
+                        </div>
+                    {% else %}
+                        {% for the_answer in all_answers %}
+                            {% if the_answer.question == the_question %}
+                                {% if the_question.type_of_question == "Choix multiple" %}
+                                    <div class="input_div">
+                                        <input type="checkbox" id="id_a_{{ the_answer.id }}" name="a_{{ the_answer.id }}"  value="{{ the_answer.id }}">
+                                        <label for="id_a_{{ the_answer.id }}">{{the_answer.answer}}</label>
+                                    </div>
+                                {% elif the_question.type_of_question == "Choix unique" %}
+                                    <div class="input_div">
+                                        <input type="radio" id="id_a_{{ the_answer.id }}" name="q_{{ the_question.id }}" value="{{ the_answer.id }}">
+                                        <label for="id_a_{{ the_answer.id }}">{{the_answer.answer}}</label>
+                                    </div>
+                                {% elif the_question.type_of_question == "Vrai/Faux" %}
+                                    <div class="input_div">
+                                        <input type="radio" id="id_a_{{ the_answer.id }}" name="a_{{ the_answer.id }}" value="{{ the_answer.is_correct|yesno:'True,False' }}">
+                                        <label for="id_a_{{ the_answer.id }}">{{ the_answer.is_correct|yesno:'Vrai,Faux' }}</label>
+                                    </div>
+                                    <div class="input_div">
+                                        <input type="radio" id="id_a_{{ the_answer.id }}" name="a_{{ the_answer.id }}" value="{{ the_answer.is_correct|yesno:'False,True' }}">
+                                        <label for="id_a_{{ the_answer.id }}">{{ the_answer.is_correct|yesno:'Faux,Vrai' }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endwith %}
+        {% endfor %}
+
+        <button type="submit" form="form1" value="Submit">Submit</button>
+    </form>
+
+{% endblock %}
