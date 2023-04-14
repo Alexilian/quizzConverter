@@ -362,14 +362,19 @@ class QuizzVisualisationFormView(FormView):
                 point_attente = int(point_attente)
         return render(request, "quizz/result_test.html", {"point_attente": point_attente, "point_totaux": point_totaux, "note_max": self.get_context_data().get('note_max')})
 
+
 class QuizzListView(ListView):
 
     model = Quizz
     template_name = 'quizz/list_quizz.html'
 
-    def get_context_data(self, **kwargs) :
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def post(self, request):
+        object_list = Quizz.objects.filter(tags__icontains=self.request.POST["search"])
+        return render(request, "quizz/list_quizz.html", {"object_list": object_list})
 
 
 def export_quizz(request, pk):
@@ -383,7 +388,6 @@ def export_quizz(request, pk):
 
     for question in quiz.questions.all():
         q = ET.SubElement(root, 'question', {'type': question.get_xml_question_type()})
-        
 
         question_text = ET.SubElement(q, 'questiontext', {'format': 'html'})
         text = ET.SubElement(question_text, 'text')
@@ -405,5 +409,4 @@ def export_quizz(request, pk):
 
 def delete_quizz(request, pk):
     Quizz.objects.get(pk=pk).delete()
-
     return redirect(reverse('list_quizz'), kwargs={'object_list': Quizz.objects.all()})

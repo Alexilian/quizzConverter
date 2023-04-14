@@ -10,7 +10,7 @@
         {% csrf_token %}
         <h1>Créer un quizz</h1>
         {% include "snippets/input_text.html" with fieldName="title" fieldLabel="Titre du quizz :" fieldValue=the_quizz.title isRequired="required" %}
-        {% include "snippets/input_text.html" with fieldName="description" fieldLabel="Description du quizz :" fieldValue=the_quizz.description isRequired="required" %}
+        {% include "snippets/input_text.html" with fieldName="tags" fieldLabel="Tags du quizz :" fieldValue=the_quizz.tags isRequired="required" %}
 
         {% for question in all_questions %}
             {% with forloop.counter as id_supp %}

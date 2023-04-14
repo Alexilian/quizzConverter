@@ -5,12 +5,20 @@
 <link rel="stylesheet" href="{% static 'style/list_quizz.css' %}">
 
 <h1 class="center_x">Liste des quizz publics</h1>
+
+
+<form id="form1" enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+    <input type="text" id="site-search" name="search" style="width: 20%" placeholder="Rechercher des tags">
+    <button style="height: 35px">Valider</button>
+</form>
+
 <table>
     <thead>
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Description</th>
+            <th>Tags</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -19,7 +27,7 @@
             <tr>
                 <td>{{ quizz.id }}</td>
                 <td>{{ quizz.title }}</td>
-                <td>{{ quizz.description }}</td>
+                <td>{{ quizz.tags }}</td>
                 <td>
                     <button onclick="location.href='{% url 'visual_quizz' quizz.id %}'" id="id_visual" class="grey">Visualiser</button>
                     <button onclick="location.href='{% url 'edit_quizz' quizz.id %}'" id="id_edit" class="orange">Editer</button>
