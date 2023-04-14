@@ -55,11 +55,11 @@ class QuizzCreateView(CreateView):
                             list_question[id_q]["title"] = self.request.POST[key]
                         else:
                             list_question[id_q] = {"title": self.request.POST[key]}
-                    elif "comment_" in key:
+                    elif "tags_" in key:
                         if id_q in list_question:
-                            list_question[id_q]["comment"] = self.request.POST[key]
+                            list_question[id_q]["tags"] = self.request.POST[key]
                         else:
-                            list_question[id_q] = {"comment": self.request.POST[key]}
+                            list_question[id_q] = {"tags": self.request.POST[key]}
                     elif "point_" in key:
                         if id_q in list_question:
                             list_question[id_q]["point"] = self.request.POST[key]
@@ -91,13 +91,13 @@ class QuizzCreateView(CreateView):
 
                 the_type = the_question["type_question"]
                 the_title = the_question["title"]
-                the_comment = the_question["comment"]
+                the_tags = the_question["tags"]
                 the_point = the_question["point"]
                 if the_type not in ["Réponse libre", "Réponse libre justification image"]:
                     the_answers = the_question["answers"]
                 new_question = Question(
                     title=the_title,
-                    comment=the_comment,
+                    tags=the_tags,
                     type_of_question=the_type,
                     quizz=new_quizz,
                     points=float(the_point),
@@ -206,11 +206,11 @@ class QuizzEditView(CreateView):
                             list_question[id_q]["title"] = self.request.POST[key]
                         else:
                             list_question[id_q] = {"title": self.request.POST[key]}
-                    elif "comment_" in key:
+                    elif "tags_" in key:
                         if id_q in list_question:
-                            list_question[id_q]["comment"] = self.request.POST[key]
+                            list_question[id_q]["tags"] = self.request.POST[key]
                         else:
-                            list_question[id_q] = {"comment": self.request.POST[key]}
+                            list_question[id_q] = {"tags": self.request.POST[key]}
                     elif "point_" in key:
                         if id_q in list_question:
                             list_question[id_q]["point"] = self.request.POST[key]
@@ -242,13 +242,13 @@ class QuizzEditView(CreateView):
 
                 the_type = the_question["type_question"]
                 the_title = the_question["title"]
-                the_comment = the_question["comment"]
+                the_tags = the_question["tags"]
                 the_point = the_question["point"]
                 if the_type not in ["Réponse libre", "Réponse libre justification image"]:
                     the_answers = the_question["answers"]
                 new_question = Question(
                     title=the_title,
-                    comment=the_comment,
+                    tags=the_tags,
                     type_of_question=the_type,
                     quizz=new_quizz,
                     points=float(the_point),

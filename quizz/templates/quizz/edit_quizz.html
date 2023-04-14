@@ -36,7 +36,7 @@
                             </select>
                         </div>
                         {% include "snippets/input_text.html" with fieldName="title_"|concatenate_str:id_supp fieldLabel="Titre de la question :" isRequired="required" fieldValue=question.title %}
-                        {% include "snippets/input_text.html" with fieldName="comment_"|concatenate_str:id_supp fieldLabel="Commentaires de la question :" isRequired="required" fieldValue=question.comment %}
+                        {% include "snippets/input_text.html" with fieldName="tags_"|concatenate_str:id_supp fieldLabel="Tags de la question :" isRequired="required" fieldValue=question.tags %}
                         {% include "snippets/input_number.html" with fieldName="point_"|concatenate_str:id_supp fieldLabel="Points totaux de la question :" fieldMin=0 fieldStep=0.25 isRequired="required" fieldValue=question.points %}
                     </div>
                     <div id="id_reponses_{{ id_supp }}" class="reponses">
