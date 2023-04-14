@@ -20,8 +20,6 @@ $('#but_add').click(function(){
 
     let input = $(`#id_question_${num} > #id_fields > .input_div > #id_title_${num-1}`).attr({"id": "id_title_"+num, "name": "title_"+num});
     input.val('');
-    let input2 = $(`#id_question_${num} > #id_fields > .input_div >  #id_comment_${num-1}`).attr({"id": "id_comment_"+num, "name": "comment_"+num});
-    input2.val('');
     let input3 = $(`#id_question_${num} > #id_fields > .input_div >  #id_point_${num-1}`).attr({"id": "id_point_"+num, "name": "point_"+num});
     input3.val('');
 });

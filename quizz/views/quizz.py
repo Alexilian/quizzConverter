@@ -1,7 +1,5 @@
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db import transaction
 from django.http import HttpResponse
-from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, CreateView, FormView, ListView
@@ -19,11 +17,16 @@ import re
 class QuizzTemplateView(TemplateView):
 
     template_name = "quizz/home.html"
+
+
+# Enleve les tag html sur les ligne
 def remove_tags(text):
-    """Remove html tags from a string"""
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text)
-def read_Moodle(file_name):
+
+
+# Lis un xml moodle
+def read_moodle(file_name):
     file = ET.parse(file_name).getroot()
 
     all = []
@@ -56,7 +59,6 @@ def read_Moodle(file_name):
                 newQuestion= Question(
                     title=intituleQuestion,
                     position =0,
-                    tags =None,
                     type_of_question =typeOfQuestion,
                     quizz =quizz,
                     points =points.text,
@@ -69,8 +71,8 @@ def read_Moodle(file_name):
             for answer in answers:
                 answerText = answer.find('text')
                 if answerText is not None:
-                    if typeOfQuestion == "shortanswer":
-                        answerString += remove_tags(answerText.text)
+                    if typeOfQuestion == "Réponse libre":
+                        answerString += remove_tags(answerText.text) + ";"
                     elif answer.attrib['fraction'] != "0":
                         newAnswer = Answer(
                             question= newQuestion,
@@ -92,8 +94,8 @@ def read_Moodle(file_name):
             if newAnswer is None:
                 newAnswer = Answer(
                     question=newQuestion,
-                    answer=answerString,
-                    is_correct = True,
+                    answer=answerString[:-1],
+                    is_correct=True,
                     points=1
                 )
                 newAnswer.save()
@@ -103,6 +105,9 @@ def read_Moodle(file_name):
         print(e)
         for objet in all:
             objet.delete()
+
+
+# Pas encore fonctionnel mais import un fichier TEX
 def import_from_tex(file_path):
     question_type = None
     with open(file_path, 'r') as f:
@@ -154,6 +159,9 @@ def import_from_tex(file_path):
             answer = Answer(question=question, **answer_data)
 
     return len(question_strs)
+
+
+# sauvegarde le xml
 def save_uploaded_file(uploaded_file):
     # Make sure the file is an InMemoryUploadedFile
     if not isinstance(uploaded_file, InMemoryUploadedFile):
@@ -169,16 +177,20 @@ def save_uploaded_file(uploaded_file):
 
     # Return the path to the new file
     return filepath
+
+
+# convertit en appelant les fonction du dessus
 class QuizzImportMoodle(FormView):
     template_name = "quizz/importFromMoodle.html"
     form_class = ImportMoodle
 
     def get_success_url(self):
         return reverse("list_quizz")
+
     def form_valid(self, form):
         if form.cleaned_data["importXML"] is not None:
             fileMoodle = form.cleaned_data["importXML"]
-            read_Moodle(fileMoodle)
+            read_moodle(fileMoodle)
         elif form.cleaned_data["importAMC"] is not None:
             fileAMC = form.cleaned_data["importAMC"]
             fileSaved = save_uploaded_file(fileAMC)
@@ -189,9 +201,13 @@ class QuizzImportMoodle(FormView):
 
             os.remove(fileSaved)
         return super(QuizzImportMoodle, self).form_valid(form)
+
     def form_invalid(self, form):
         print(form.errors)
         return super(QuizzImportMoodle, self).form_invalid(form)
+
+
+# créer un quizz
 class QuizzCreateView(CreateView):
 
     template_name = "quizz/create_quizz.html"
@@ -231,11 +247,6 @@ class QuizzCreateView(CreateView):
                             list_question[id_q]["title"] = self.request.POST[key]
                         else:
                             list_question[id_q] = {"title": self.request.POST[key]}
-                    elif "tags_" in key:
-                        if id_q in list_question:
-                            list_question[id_q]["tags"] = self.request.POST[key]
-                        else:
-                            list_question[id_q] = {"tags": self.request.POST[key]}
                     elif "point_" in key:
                         if id_q in list_question:
                             list_question[id_q]["point"] = self.request.POST[key]
@@ -267,13 +278,11 @@ class QuizzCreateView(CreateView):
 
                 the_type = the_question["type_question"]
                 the_title = the_question["title"]
-                the_tags = the_question["tags"]
                 the_point = the_question["point"]
                 if the_type not in ["Réponse libre", "Réponse libre justification image"]:
                     the_answers = the_question["answers"]
                 new_question = Question(
                     title=the_title,
-                    tags=the_tags,
                     type_of_question=the_type,
                     quizz=new_quizz,
                     points=float(the_point),
@@ -333,6 +342,7 @@ class QuizzCreateView(CreateView):
             return super(QuizzCreateView, self).form_invalid(form)
 
 
+# edit un quizz
 class QuizzEditView(CreateView):
 
     template_name = "quizz/edit_quizz.html"
@@ -365,7 +375,6 @@ class QuizzEditView(CreateView):
 
             new_quizz = form.custom_save()
             created_objects.append(new_quizz)
-
             for key in list(self.request.POST.keys())[3:]:
 
                 id_q = re.findall(r'\d+', key)
@@ -381,11 +390,6 @@ class QuizzEditView(CreateView):
                             list_question[id_q]["title"] = self.request.POST[key]
                         else:
                             list_question[id_q] = {"title": self.request.POST[key]}
-                    elif "tags_" in key:
-                        if id_q in list_question:
-                            list_question[id_q]["tags"] = self.request.POST[key]
-                        else:
-                            list_question[id_q] = {"tags": self.request.POST[key]}
                     elif "point_" in key:
                         if id_q in list_question:
                             list_question[id_q]["point"] = self.request.POST[key]
@@ -417,13 +421,11 @@ class QuizzEditView(CreateView):
 
                 the_type = the_question["type_question"]
                 the_title = the_question["title"]
-                the_tags = the_question["tags"]
                 the_point = the_question["point"]
                 if the_type not in ["Réponse libre", "Réponse libre justification image"]:
                     the_answers = the_question["answers"]
                 new_question = Question(
                     title=the_title,
-                    tags=the_tags,
                     type_of_question=the_type,
                     quizz=new_quizz,
                     points=float(the_point),
@@ -482,6 +484,7 @@ class QuizzEditView(CreateView):
             return super(QuizzEditView, self).form_invalid(form)
 
 
+# permet de visualiser le quizz
 class QuizzVisualisationFormView(FormView):
 
     template_name = "quizz/visual_quizz.html"
@@ -527,8 +530,8 @@ class QuizzVisualisationFormView(FormView):
                 if the_question.type_of_question == "Réponse libre":
                     if Answer.objects.filter(question=the_question).count() == 0:
                         point_attente += the_question.points
-                    elif Answer.objects.get(question=the_question).answer:
-                        point_totaux += Answer.objects.get(question=the_question) * the_question.points
+                    elif self.request.POST[element] in Answer.objects.get(question=the_question).answer.split(";"):
+                        point_totaux += Answer.objects.get(question=the_question).points * the_question.points
                 else:
                     point_totaux += Answer.objects.get(id=self.request.POST[element]).points * the_question.points
             if self.get_context_data().get('note_max') == int(self.get_context_data().get('note_max')):
@@ -538,6 +541,7 @@ class QuizzVisualisationFormView(FormView):
         return render(request, "quizz/result_test.html", {"point_attente": point_attente, "point_totaux": point_totaux, "note_max": self.get_context_data().get('note_max')})
 
 
+# affiche la liste des quizz
 class QuizzListView(ListView):
 
     model = Quizz
@@ -552,6 +556,7 @@ class QuizzListView(ListView):
         return render(request, "quizz/list_quizz.html", {"object_list": object_list})
 
 
+# export sous xml un quizz
 def export_quizz(request, pk):
     quiz = Quizz.objects.get(pk=pk)
     root = ET.Element('quiz')
@@ -582,6 +587,7 @@ def export_quizz(request, pk):
     return response
 
 
+# supprime un quizz
 def delete_quizz(request, pk):
     Quizz.objects.get(pk=pk).delete()
     return redirect(reverse('list_quizz'), kwargs={'object_list': Quizz.objects.all()})
