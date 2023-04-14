@@ -11,8 +11,6 @@ from quizz.forms.quizz import QuizzForm
 from quizz.models import Question, Quizz, Answer, QuestionType
 
 from xml.etree import ElementTree as ET
-from pylatex import Document, Section, Subsection
-from pylatexenc.latex2text import LatexNodes2Text
 
 import os
 import re
@@ -40,6 +38,10 @@ def read_Moodle(file_name):
         for question in file.findall('question'):
             newQuestion = None
             typeOfQuestion = question.attrib['type']
+            if typeOfQuestion == "shortanswer":
+                typeOfQuestion = "Réponse libre"
+            elif typeOfQuestion == "multichoice":
+                typeOfQuestion = "Choix multiple"
             questionText = question.find('questiontext')
             points = question.find('defaultgrade')
             answers = question.findall('answer')
@@ -54,7 +56,7 @@ def read_Moodle(file_name):
                 newQuestion= Question(
                     title=intituleQuestion,
                     position =0,
-                    comment =None,
+                    tags =None,
                     type_of_question =typeOfQuestion,
                     quizz =quizz,
                     points =points.text,
@@ -172,7 +174,7 @@ class QuizzImportMoodle(FormView):
     form_class = ImportMoodle
 
     def get_success_url(self):
-        return reverse("home")
+        return reverse("list_quizz")
     def form_valid(self, form):
         if form.cleaned_data["importXML"] is not None:
             fileMoodle = form.cleaned_data["importXML"]
