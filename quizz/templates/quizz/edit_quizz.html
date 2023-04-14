@@ -2,7 +2,7 @@
 {% load static %}
 {% load tags_extras %}
 {% block content %}
-{% block extrascripts %}<script type="text/JavaScript" src="{% static 'js/create_quizz.js' %}"></script>{% endblock %}
+{% block extrascripts %}<script type="text/JavaScript" src="{% static 'js/edit_quizz.js' %}"></script>{% endblock %}
 
     <link rel="stylesheet" href="{% static 'style/create_quizz.css' %}">
 
@@ -10,14 +10,14 @@
         {% csrf_token %}
         <h1>Créer un quizz</h1>
         {% include "snippets/input_text.html" with fieldName="title" fieldLabel="Titre du quizz :" fieldValue=the_quizz.title isRequired="required" %}
-        {% include "snippets/input_text.html" with fieldName="description" fieldLabel="Description du quizz :" fieldValue=the_quizz.description isRequired="required" %}
+        {% include "snippets/input_text.html" with fieldName="tags" fieldLabel="Tags du quizz :" fieldValue=the_quizz.tags isRequired="required" %}
 
         {% for question in all_questions %}
             {% with forloop.counter as id_supp %}
                 <div id="id_question_{{ id_supp }}" class="one_question">
                     <h2>
                         {% if id_supp != 1 %}
-                            <svg id="'+num+'" onclick="delQuestion('+num+')" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg>
+                            <svg id="{{ id_supp }}" onclick="delQuestion({{ id_supp }})" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg>
                         {% endif %}
                         Question n°{{ id_supp }}
                     </h2>
@@ -36,7 +36,7 @@
                             </select>
                         </div>
                         {% include "snippets/input_text.html" with fieldName="title_"|concatenate_str:id_supp fieldLabel="Titre de la question :" isRequired="required" fieldValue=question.title %}
-                        {% include "snippets/input_text.html" with fieldName="comment_"|concatenate_str:id_supp fieldLabel="Commentaires de la question :" isRequired="required" fieldValue=question.comment %}
+                        {% include "snippets/input_text.html" with fieldName="tags_"|concatenate_str:id_supp fieldLabel="Tags de la question :" isRequired="required" fieldValue=question.tags %}
                         {% include "snippets/input_number.html" with fieldName="point_"|concatenate_str:id_supp fieldLabel="Points totaux de la question :" fieldMin=0 fieldStep=0.25 isRequired="required" fieldValue=question.points %}
                     </div>
                     <div id="id_reponses_{{ id_supp }}" class="reponses">
@@ -50,13 +50,13 @@
                                         {% if id_child == 1 %}
                                             <div class="input_div" name="answer_{{id_child}}"><label for="id_q_{{id_supp}}_answer_{{id_child}}">Bonne réponse :</label><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" required></div>
                                         {% else %}
-                                            <div class="input_div" name="answer_{{id_child}}"><svg id="id_cross_'+id+'_'+id_answer+'" onclick="delAnswer('+id_answer+','+id+')" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" style="width: 98%;" required></div>
+                                            <div class="input_div" name="answer_{{id_child}}"><svg id="id_cross_{{id_supp}}_{{id_child}}" onclick="delAnswer({{id_child}}, {{id_supp}})" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" style="width: 98%;" required></div>
                                         {% endif %}
                                     {% elif question.type_of_question == "Choix multiple" %}
                                         {% if id_child == 1 %}
                                             Points / Réponse :<div class="input_div" name="answer_{{id_child}}"><label for="id_q_{{id_supp}}_answer_{{id_child}}"><script>addPourcentageToHTML(getPourcentages({{id_supp}}, {{id_child}}, {{answer.points}}))</script></label><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" style="width: 90%;" required></div>
                                         {% else %}
-                                            <div class="input_div" name="answer_{{id_child}}"><svg id="id_cross_'+id+'_'+id_answer+'" onclick="delAnswer('+id_answer+','+id+')" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg><label for="id_q_{{id_supp}}_answer_{{id_child}}"><script>addPourcentageToHTML(getPourcentages({{id_supp}}, {{id_child}}, {{answer.points}}))</script></label><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" style="width: 90%;" required></div>
+                                            <div class="input_div" name="answer_{{id_child}}"><svg id="id_cross_{{id_supp}}_{{id_child}}" onclick="delAnswer({{id_child}},{{id_supp}})" style="color: red" height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"></circle><g transform="matrix(0 1 -1 0 17 0)"><path d="m5.5 11.5 6-6" fill="red"></path><path d="m5.5 5.5 6 6" fill="red"></path></g></g></svg><label for="id_q_{{id_supp}}_answer_{{id_child}}"><script>addPourcentageToHTML(getPourcentages({{id_supp}}, {{id_child}}, {{answer.points}}))</script></label><input value="{{answer.answer}}" type="text" id="id_q_{{id_supp}}_answer_{{id_child}}" name="q_{{id_supp}}_answer_{{id_child}}" style="width: 90%;" required></div>
                                         {% endif %}
 
                                     {% endif %}
@@ -79,5 +79,5 @@
 
         <button type="submit" form="form1" value="Submit">Submit</button>
     </form>
-
+{% block extrascripts2 %}<script type="text/JavaScript" src="{% static 'js/edit_button_add.js' %}"></script>{% endblock %}
 {% endblock %}

@@ -7,7 +7,7 @@ from quizz.models import Quizz, QuizzType
 class QuizzForm(ModelForm):
     class Meta:
         model = Quizz
-        fields = ["title", "description"]
+        fields = ["title", "tags"]
 
     def custom_save(self):
         my_obj = self.save()

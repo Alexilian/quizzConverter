@@ -1,0 +1,11 @@
+{% comment %}
+Paramètres:
+    fieldName: correspond au name donné a l'input, et va etre donné pour l'ID
+    fieldLabel: correspond au nom affiché a l'input
+    fieldValue (non obligatoire): correspond a la value qu'on veut lui donner (si on veut lui en donner)
+{% endcomment %}
+
+<div class="input_div">
+    <input type="checkbox" value="{{fieldValue}}" id="id_{{ fieldName }}" name="{{ fieldName }}" {{isRequired}}>
+    <label for="id_{{ fieldName }}"> {{fieldLabel}}</label>
+</div>

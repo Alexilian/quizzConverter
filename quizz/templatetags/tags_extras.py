@@ -1,5 +1,9 @@
 from django import template
 
+from quizz.models import Quizz
+import xml.etree.ElementTree as ET
+from django.forms.models import model_to_dict
+
 register = template.Library()
 
 
