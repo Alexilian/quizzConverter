@@ -10,7 +10,7 @@ class QuizzType(models.TextChoices):
 class Quizz(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quizzes", null=True, blank=True)
     title = models.CharField(max_length=40)
-    description = models.TextField()
+    tags = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
