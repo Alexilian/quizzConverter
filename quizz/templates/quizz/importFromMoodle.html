@@ -6,7 +6,7 @@
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}
         <label for="id_importMoodle">Importez votre fichier XML Moodle</label>
-        <input type="file" id="id_importMoodle" name="importXML">
+        <input type="file" id="id_importMoodle" name="importXML" accept="text/xml">
         <br>
         <br>
 
