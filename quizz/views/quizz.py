@@ -1,10 +1,15 @@
 from xml.etree import ElementTree as ET
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db import transaction
 from django.urls import reverse
 from django.views.generic import TemplateView, CreateView, FormView
 from quizz.forms.importMoodle import ImportMoodle
 from quizz.forms.quizz import QuizzForm
 from quizz.models import Question, Quizz, Answer, QuestionType
+import os
 import re
+from pylatex import Document, Section, Subsection
+from pylatexenc.latex2text import LatexNodes2Text
 
 
 class QuizzTemplateView(TemplateView):
@@ -14,8 +19,7 @@ def remove_tags(text):
     """Remove html tags from a string"""
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text)
-
-def read_XML(file_name):
+def read_Moodle(file_name):
     file = ET.parse(file_name).getroot()
 
     all = []
@@ -91,10 +95,72 @@ def read_XML(file_name):
         print(e)
         for objet in all:
             objet.delete()
+def import_from_tex(file_path):
+    question_type = None
+    with open(file_path, 'r') as f:
+        content = f.read()
 
+    # Split the content by questions
+    question_strs = re.findall(r'\\begin{question}{.+?}(.*?)(?=\\begin{question}|\\end{document})', content, re.DOTALL)
 
+    for question_str in question_strs:
+        # Extract the title
+        title_match = re.search(r'(?<=[\n\.])\s*([A-Z].*?\.)(?=\s)', question_str)
+        print(title_match)
+        if title_match:
+            title = title_match.group(1).strip()
+        else:
+            title = ''
 
+        # Extract the type of question
+        type_of_question_match = re.search(r'\\begin{question}{(.+)}', question_str)
+        if type_of_question_match:
+            type_of_question = type_of_question_match.group(1)
+            if type_of_question == 'truefalse':
+                question_type = QuestionType.Boolean
+            elif type_of_question == 'multiple':
+                question_type = QuestionType.Multiple
+            elif type_of_question == 'single':
+                question_type = QuestionType.Unique
+            elif type_of_question == 'freestyle':
+                question_type = QuestionType.Libre
+            elif type_of_question == 'freestylejimg':
+                question_type = QuestionType.ImageJustif
+            else:
+                question_type = ''
 
+        # Extract the answers
+        answers = []
+        answers_match = re.search(r'\\begin{reponses}(.*?)\\end{reponses}', question_str, re.DOTALL)
+        if answers_match:
+            answer_strs = re.findall(r'\\(wrongchoice|correctchoice)\[(\w)\](.*?)\n', answers_match.group(1))
+            for answer_str in answer_strs:
+                answer = answer_str[2].strip()
+                is_correct = answer_str[0] == 'correctchoice'
+                points = float(answer_str[1]) if answer_str[1] else None
+                answers.append({'answer': answer, 'is_correct': is_correct, 'points': points})
+
+        # Save the question and answers
+        question = Question(title=title, type_of_question=question_type)
+        for answer_data in answers:
+            answer = Answer(question=question, **answer_data)
+
+    return len(question_strs)
+def save_uploaded_file(uploaded_file):
+    # Make sure the file is an InMemoryUploadedFile
+    if not isinstance(uploaded_file, InMemoryUploadedFile):
+        raise TypeError("Expected an InMemoryUploadedFile object")
+
+    # Create a new file in write binary mode
+    filename = uploaded_file.name
+    filepath = os.path.join(filename)
+    with open(filepath, "wb") as f:
+        # Write the contents of the uploaded file to the new file
+        for chunk in uploaded_file.chunks():
+            f.write(chunk)
+
+    # Return the path to the new file
+    return filepath
 class QuizzImportMoodle(FormView):
     template_name = "quizz/importFromMoodle.html"
     form_class = ImportMoodle
@@ -102,17 +168,22 @@ class QuizzImportMoodle(FormView):
     def get_success_url(self):
         return reverse("home")
     def form_valid(self, form):
-        file = form.cleaned_data["importXML"]
-        read_XML(file)
+        if form.cleaned_data["importXML"] is not None:
+            fileMoodle = form.cleaned_data["importXML"]
+            read_Moodle(fileMoodle)
+        elif form.cleaned_data["importAMC"] is not None:
+            fileAMC = form.cleaned_data["importAMC"]
+            fileSaved = save_uploaded_file(fileAMC)
+            data = import_from_tex(fileSaved)
+            print(data)
+            # for question in questions:
+            #     print(question.title, question.type_of_question)
+
+            os.remove(fileSaved)
         return super(QuizzImportMoodle, self).form_valid(form)
     def form_invalid(self, form):
         print(form.errors)
         return super(QuizzImportMoodle, self).form_invalid(form)
-
-
-
-
-
 class QuizzCreateView(CreateView):
 
     template_name = "quizz/create_quizz.html"
@@ -256,8 +327,6 @@ class QuizzCreateView(CreateView):
             for the_object in created_objects:
                 the_object.delete()
             return super(QuizzCreateView, self).form_invalid(form)
-
-
 class QuizzEditView(CreateView):
 
     template_name = "quizz/edit_quizz.html"
