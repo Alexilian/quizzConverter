@@ -1,12 +1,15 @@
 from django.http import HttpResponse
 
+from django.urls import reverse
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, CreateView, FormView, ListView
 
+from quizz.forms.importMoodle import ImportMoodle
 from quizz.forms.quizz import QuizzForm
 from quizz.models import Question, Quizz, Answer, QuestionType
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree as ET
 
 import re
 
@@ -14,6 +17,107 @@ import re
 class QuizzTemplateView(TemplateView):
 
     template_name = "quizz/home.html"
+def remove_tags(text):
+    """Remove html tags from a string"""
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
+def read_XML(file_name):
+    file = ET.parse(file_name).getroot()
+
+    all = []
+
+    try:
+        quizz = Quizz(
+            title = file_name
+        )
+        quizz.save()
+        all.append(quizz)
+
+        for question in file.findall('question'):
+            newQuestion = None
+            typeOfQuestion = question.attrib['type']
+            questionText = question.find('questiontext')
+            points = question.find('defaultgrade')
+            answers = question.findall('answer')
+            intituleQuestion = ""
+
+            if questionText is not None:
+                testquest = questionText.find("text")
+                if testquest is not None:
+                    intituleQuestion = remove_tags(testquest.text)
+
+            if points is not None:
+                newQuestion= Question(
+                    title=intituleQuestion,
+                    position =0,
+                    comment =None,
+                    type_of_question =typeOfQuestion,
+                    quizz =quizz,
+                    points =points.text,
+                )
+                newQuestion.save()
+                all.append(newQuestion)
+
+            newAnswer = None
+            answerString = ""
+            for answer in answers:
+                answerText = answer.find('text')
+                if answerText is not None:
+                    if typeOfQuestion == "shortanswer":
+                        answerString += remove_tags(answerText.text)
+                    elif answer.attrib['fraction'] != "0":
+                        newAnswer = Answer(
+                            question= newQuestion,
+                            answer = remove_tags(answerText.text),
+                            is_correct = True,
+                            points = int(answer.attrib['fraction'])/100
+                        )
+                        newAnswer.save()
+                        all.append(newAnswer)
+                    else:
+                        newAnswer = Answer(
+                            question=newQuestion,
+                            answer=remove_tags(answerText.text),
+                            points=int(answer.attrib['fraction'])/100
+                        )
+                        newAnswer.save()
+                        all.append(newAnswer)
+
+            if newAnswer is None:
+                newAnswer = Answer(
+                    question=newQuestion,
+                    answer=answerString,
+                    is_correct = True,
+                    points=1
+                )
+                newAnswer.save()
+                all.append(newAnswer)
+
+    except Exception as e :
+        print(e)
+        for objet in all:
+            objet.delete()
+
+
+
+
+class QuizzImportMoodle(FormView):
+    template_name = "quizz/importFromMoodle.html"
+    form_class = ImportMoodle
+
+    def get_success_url(self):
+        return reverse("home")
+    def form_valid(self, form):
+        file = form.cleaned_data["importXML"]
+        read_XML(file)
+        return super(QuizzImportMoodle, self).form_valid(form)
+    def form_invalid(self, form):
+        print(form.errors)
+        return super(QuizzImportMoodle, self).form_invalid(form)
+
+
+
 
 
 class QuizzCreateView(CreateView):
